@@ -145,13 +145,14 @@ class todoControllers{
             const columns = req.body.columns
             const idUser = req.query.id
             const name = req.body.name
-            const board =new Board({name, columns})
+            let board =new Board({name, columns})
             await User.updateOne({_id:idUser},{$push: { 'boards':board }})
             let boardId = await User.find({_id:idUser})
             let boardAuthor = boardId[0].username
             boardId = boardId[0].boards.slice(-1)._id
             board.author = boardAuthor
             board.id = boardId
+            board.accessUser.push(idUser)
             const newBoard = new Board(board)
             await newBoard.save()
             return res.status(200).send('board Add')
